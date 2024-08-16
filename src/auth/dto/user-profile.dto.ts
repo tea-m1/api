@@ -15,6 +15,6 @@ export class UserProfile {
   birthDate: Date;
   birthPlace: string;
   registrationDate: Date;
-  role: Role[];
+  role: Role;
   location: LocationEntity;
 }

@@ -55,12 +55,12 @@ export class UserEntity {
     enum: Role,
     default: Role.USER,
   })
-  role: Role[];
+  role: Role;
 
   @Column({ type: 'varchar', length: 250 })
   password: string;
 
   @OneToOne(() => LocationEntity, { cascade: true, eager: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'locationid' })
   location: LocationEntity;
 }

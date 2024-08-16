@@ -42,5 +42,5 @@ export class UserSignupDto {
   phone: string;
 
   @IsEnum(Role, { each: true })
-  role: Role[];
+  role: Role;
 }

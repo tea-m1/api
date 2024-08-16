@@ -45,7 +45,7 @@ class ConfigCore {
       migrationsTableName: 'migration',
       autoLoadEntities: true,
       migrations: [__dirname + '/../migration/*.ts'],
-      ssl: this.isProduction() ? { rejectUnauthorized: false } : false,
+      ssl: this.isProduction() ? false : { rejectUnauthorized: false },
       logging: true,
     };
   }

@@ -19,6 +19,6 @@ export class PlacesEntity {
   description: string;
 
   @OneToOne(() => LocationEntity, { cascade: true, eager: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'locationid' })
   location: LocationEntity;
 }
