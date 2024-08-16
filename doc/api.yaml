@@ -1,13 +1,14 @@
 openapi: "3.0.3"
 info:
-  title: KiS & HKM
+  title: TEAM MAIN
   version: "latest"
 servers:
   - url: http://localhost:8080
     description: Local environment
   - url: https://api.server.test
+    description: Production server
 security:
-  - BearerAuth: [ ]
+  - BearerAuth: []
 
 paths:
   "/ping":
@@ -15,7 +16,7 @@ paths:
       tags:
         - "Health"
       operationId: ping
-      security: [ ]
+      security: []
       responses:
         "200":
           description: OK
@@ -24,14 +25,15 @@ paths:
               schema:
                 type: string
                 example: pong
+
   "/auth/login/":
     post:
       tags:
         - "Authentication"
       description: |
-        - Takes a set of user credentials and returns an access and refresh JSON web
+        Takes a set of user credentials and returns an access and refresh JSON web
         token pair to prove the authentication of those credentials.
-      security: [ ]
+      security: []
       operationId: login
       summary: Login connexion
       requestBody:
@@ -47,6 +49,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TokenPair"
+
   "/users/whoami/":
     get:
       tags:
@@ -60,15 +63,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Whoami"
-  /auth/verify/:
+
+  "/auth/verify/":
     post:
       operationId: verifyToken
-      description: |-
-        Takes a token and indicates if it is valid.  This view provides no
+      description: |
+        Takes a token and indicates if it is valid. This view provides no
         information about a token's fitness for a particular use.
       tags:
-        - Authentication
-      security: [ ]
+        - "Authentication"
+      security: []
       requestBody:
         content:
           application/json:
@@ -95,6 +99,7 @@ paths:
                   code:
                     type: string
                     example: "token_not_valid"
+
   "/users/signup/":
     post:
       tags:
@@ -114,11 +119,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Whoami"
-  /users/set_password/:
+
+  "/users/set_password/":
     post:
       operationId: changePassword
       tags:
-        - Account
+        - "Account"
       summary: Change the password
       requestBody:
         required: true
@@ -127,13 +133,14 @@ paths:
             schema:
               $ref: "#/components/schemas/SetPassword"
       responses:
-        204:
+        "204":
           description: No Content
-  /users/set_username/:
+
+  "/users/set_username/":
     post:
       operationId: changeUsername
       tags:
-        - Account
+        - "Account"
       requestBody:
         content:
           application/json:
@@ -150,14 +157,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SetUsername"
+
   "/auth/refresh/":
     post:
       operationId: refreshToken
-      description: |-
+      description: |
         Takes a refresh type JSON web token and returns an access type JSON web
         token if the refresh token is valid.
       tags:
-        - Authentication
+        - "Authentication"
       requestBody:
         content:
           application/json:
@@ -177,11 +185,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/TokenRefresh"
           description: ""
+
   "/users/":
-    summary: For all operation specific to user globally
+    summary: For all operations specific to users globally
     get:
       tags:
-        - Account
+        - "Account"
       operationId: getUsers
       description: Only admin users are allowed to get all users
       parameters:
@@ -192,7 +201,7 @@ paths:
           description: User that the username contains the lookup value
         - name: role
           in: query
-          description: search for the user that have the specified role
+          description: Search for the user that has the specified role
           schema:
             $ref: "#/components/schemas/UserRole"
         - name: page
@@ -216,12 +225,256 @@ paths:
                 items:
                   $ref: "#/components/schemas/CreateUser"
 
+  "/species":
+    get:
+      tags:
+        - "Biodiversity"
+      summary: List all species
+      responses:
+        "200":
+          description: A list of species
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Species'
+    post:
+      tags:
+        - "Biodiversity"
+      summary: Add a new species
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Species'
+      responses:
+        "201":
+          description: Species created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Species'
+
+  "/species/{id}":
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Biodiversity"
+      summary: Get species by ID
+      responses:
+        "200":
+          description: Details of a species
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Species'
+    put:
+      tags:
+        - "Biodiversity"
+      summary: Update a species
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Species'
+      responses:
+        "200":
+          description: Species updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Species'
+    delete:
+      tags:
+        - "Biodiversity"
+      summary: Delete a species
+      responses:
+        "204":
+          description: Species deleted
+
+  "/places":
+    get:
+      tags:
+        - "Biodiversity"
+      summary: List all places
+      responses:
+        "200":
+          description: A list of places
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Place'
+    post:
+      tags:
+        - "Biodiversity"
+      summary: Add a new place
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Place'
+      responses:
+        "201":
+          description: Place created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+
+  "/places/{id}":
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "Biodiversity"
+      summary: Get place by ID
+      responses:
+        "200":
+          description: Details of a place
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+    put:
+      tags:
+        - "Biodiversity"
+      summary: Update a place
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Place'
+      responses:
+        "200":
+          description: Place updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+    delete:
+      tags:
+        - "Biodiversity"
+      summary: Delete a place
+      responses:
+        "204":
+          description: Place deleted
+
+  "/products":
+    get:
+      tags:
+        - "E-Commerce"
+      summary: List all products
+      responses:
+        "200":
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      tags:
+        - "E-Commerce"
+      summary: Add a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  "/products/{id}":
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - "E-Commerce"
+      summary: Get product by ID
+      responses:
+        "200":
+          description: Details of a product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    put:
+      tags:
+        - "E-Commerce"
+      summary: Update a product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      tags:
+        - "E-Commerce"
+      summary: Delete a product
+      responses:
+        "204":
+          description: Product deleted
+
+  "/orders":
+    post:
+      tags:
+        - "E-Commerce"
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        "201":
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
 
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
+
   schemas:
     Whoami:
       allOf:
@@ -234,6 +487,7 @@ components:
           readOnly: true
         exp:
           type: integer
+
     TokenVerify:
       type: object
       properties:
@@ -242,9 +496,11 @@ components:
           writeOnly: true
       required:
         - token
+
     UserRole:
       type: string
-      enum: [ ADMIN, USER]
+      enum: [ADMIN, USER]
+
     SetPassword:
       type: object
       properties:
@@ -255,6 +511,7 @@ components:
       required:
         - current_password
         - new_password
+
     SetUsername:
       type: object
       properties:
@@ -271,6 +528,7 @@ components:
       required:
         - current_password
         - new_username
+
     Activation:
       type: object
       properties:
@@ -281,17 +539,19 @@ components:
       required:
         - token
         - uid
+
     TokenPair:
       type: object
       properties:
         access:
           type: string
-          description: access token
+          description: Access token
           readOnly: true
         refresh:
           type: string
-          description: refresh token
+          description: Refresh token
           readOnly: true
+
     TokenRefresh:
       type: object
       properties:
@@ -299,6 +559,48 @@ components:
           type: string
         refresh:
           type: string
+
+    Species:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - description
+        - entityType
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: uri
+        entityType:
+          type: string
+          enum:
+            - Animal
+            - Plant
+          description: The type of entity (e.g., Animal or Plant)
+
+    Place:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+
     User:
       required:
         - id
@@ -339,9 +641,11 @@ components:
         username:
           type: string
           description: Username of the user associated with this user profile
+
     CreateUser:
       allOf:
         - $ref: "#/components/schemas/User"
+
     Location:
       required:
         - latitude
@@ -351,6 +655,7 @@ components:
           type: number
         longitude:
           type: number
+
     UserLogin:
       required:
         - email
@@ -361,3 +666,43 @@ components:
           format: email
         password:
           type: string
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        image:
+          type: string
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+        totalAmount:
+          type: number
+          format: float
+        status:
+          type: string
+          enum:
+            - PENDING
+            - COMPLETED
+            - CANCELLED
