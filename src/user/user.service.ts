@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entity/user.entity';
@@ -16,13 +14,11 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  // @ts-ignore
   async findById(id: string): Promise<UserEntity | null> {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  // @ts-ignore
-  async findByName(name: string): Promise<UserEntity | null> {
-    return this.userRepository.findOne({ where: { name } });
+  async findByUserName(userName: string): Promise<UserEntity | null> {
+    return this.userRepository.findOne({ where: { userName } });
   }
 }
