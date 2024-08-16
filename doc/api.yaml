@@ -574,13 +574,28 @@ components:
           format: uuid
         name:
           type: string
+        scientificName:
+          type: string
         type:
           type: string
+          enum:
+            - Mammal
+            - Bird
+            - Reptile
+            - Amphibian
+            - Fish
+            - Insect
+            - Tree
+            - Flower
+            - Shrub
+            - Grass
+          description: The specific type of species (e.g., Mammal, Bird, Tree, Flower)
         description:
           type: string
         image:
           type: string
           format: uri
+          description: URL of the species image
         entityType:
           type: string
           enum:
