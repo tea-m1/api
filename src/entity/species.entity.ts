@@ -11,7 +11,7 @@ export class SpeciesEntity {
   name: string;
 
   @Column({ type: 'varchar', length: 250 })
-  scientificName: string;
+  scientificname: string;
 
   @Column({
     type: 'enum',
@@ -30,5 +30,5 @@ export class SpeciesEntity {
   images: FileEntity[];
 
   @Column({ type: 'enum', enum: ['ANIMAL', 'PLANT'] })
-  entityType: 'ANIMAL' | 'PLANT';
+  entitytype: 'ANIMAL' | 'PLANT';
 }

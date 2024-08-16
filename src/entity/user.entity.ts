@@ -13,19 +13,19 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: true, name: 'isactive' })
   isActive: boolean;
 
   @Column({ type: 'varchar', length: 250 })
   email: string;
 
-  @Column({ type: 'varchar', length: 250, nullable: true })
+  @Column({ type: 'varchar', length: 250, nullable: true, name: 'username' })
   userName: string;
 
-  @Column({ type: 'varchar', length: 250 })
+  @Column({ type: 'varchar', length: 250, name: 'lastname' })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 250 })
+  @Column({ type: 'varchar', length: 250, name: 'firstname' })
   firstName: string;
 
   @Column({ type: 'varchar', length: 14 })
@@ -37,13 +37,17 @@ export class UserEntity {
   @Column({ type: 'enum', enum: ['MALE', 'FEMALE'] })
   gender: 'MALE' | 'FEMALE';
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', name: 'birthdate' })
   birthDate: Date;
 
-  @Column({ type: 'varchar', length: 250 })
+  @Column({ type: 'varchar', length: 250, name: 'birthplace' })
   birthPlace: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'createdat',
+  })
   registrationDate: Date;
 
   @Column({

@@ -15,8 +15,8 @@ export class BlacklistedTokenEntity {
   token: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdat: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedat: Date;
 }
