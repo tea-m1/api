@@ -3,7 +3,7 @@ import { JwtAuthGuard } from '../core/jwt-auth.guard';
 import { CurrentUser } from '../core/decorators/user.decorator';
 import { Roles } from '../core/decorators/roles.decorator';
 import { Role } from '../entity/role.enum';
-import { UserProfile } from '../auth/model/userprofile.model';
+import { UserProfile } from '../auth/dto/user-profile.dto';
 
 @Controller('users')
 export class UserController {

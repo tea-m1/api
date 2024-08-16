@@ -5,10 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserSignupDto } from './dto/user-signup.dto';
-import { UserProfile } from './model/userprofile.model';
+import { UserProfile } from './dto/user-profile.dto';
 import { UserLoginDto } from './dto/user-login.dto';
-import { Role } from '../entity/role.enum';
 import { BlacklistService } from '../blacklist/blacklist.service';
+import { configService } from '../core/core.module';
 
 @Injectable()
 export class AuthService {
@@ -54,7 +54,7 @@ export class AuthService {
 
   async login(user: UserEntity): Promise<{ access_token: string }> {
     const payload = this.createPayload(user);
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = await this.generateToken(payload);
     return {
       access_token: accessToken,
     };
@@ -84,22 +84,15 @@ export class AuthService {
     return bcrypt.compare(inputPassword, storedPassword);
   }
 
-  private createPayload(user: UserEntity): {
-    lastName: string;
-    sub: string;
-    address: string;
-    role: Role[];
-    gender: 'MALE' | 'FEMALE';
-    birthDate: Date;
-    birthPlace: string;
-    firstName: string;
-    phone: string;
-    registrationDate: Date;
-    id: string;
-    email: string;
-    username: string;
-  } {
+  async generateToken(payload: UserProfile): Promise<string> {
+    return this.jwtService.sign(payload, {
+      secret: configService.getJWTSecret(),
+    });
+  }
+
+  private createPayload(user: UserEntity): UserProfile {
     return {
+      location: user.location,
       address: user.address,
       birthDate: user.birthDate,
       birthPlace: user.birthPlace,
@@ -110,7 +103,6 @@ export class AuthService {
       phone: user.phone,
       registrationDate: user.registrationDate,
       username: user.userName,
-      sub: user.id,
       email: user.email,
       role: user.role,
     };

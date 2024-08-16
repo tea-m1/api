@@ -9,6 +9,10 @@ import { UserController } from './user/user.controller';
 import { UsersModule } from './user/user.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { BlacklistModule } from './blacklist/blacklist.module';
+import { SpeciesModule } from './species/species.module';
+import { FileModule } from './file/file.module';
+import { SpeciesController } from './species/species.controller';
+import { SpeciesService } from './species/species.service';
 
 @Module({
   imports: [
@@ -17,8 +21,10 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     UsersModule,
     JwtModule,
     BlacklistModule,
+    SpeciesModule,
+    FileModule,
   ],
-  controllers: [AppController, UserController],
-  providers: [UserService, AppService, JwtService],
+  controllers: [AppController, UserController, SpeciesController],
+  providers: [UserService, AppService, JwtService, SpeciesService],
 })
 export class AppModule {}
