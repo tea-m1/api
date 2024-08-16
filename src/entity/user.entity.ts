@@ -24,7 +24,7 @@ export abstract class UserEntity {
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.User,
+    default: Role.USER,
   })
   role: Role[];
 
