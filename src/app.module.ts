@@ -14,6 +14,7 @@ import { FileModule } from './file/file.module';
 import { SpeciesController } from './species/species.controller';
 import { SpeciesService } from './species/species.service';
 import { PlacesModule } from './places/places.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PlacesModule } from './places/places.module';
     SpeciesModule,
     FileModule,
     PlacesModule,
+    PostsModule,
   ],
   controllers: [AppController, UserController, SpeciesController],
   providers: [UserService, AppService, JwtService, SpeciesService],
