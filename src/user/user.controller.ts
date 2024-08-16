@@ -9,7 +9,7 @@ import { Role } from '../entity/role.enum';
 export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('whoami')
-  @Roles(Role.User)
+  @Roles(Role.USER)
   getProfile(@CurrentUser() user: UserEntity) {
     return user;
   }

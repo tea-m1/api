@@ -226,7 +226,14 @@ components:
     Whoami:
       allOf:
         - type: object
-        - $ref: "#/components/schemas/GetUser"
+        - $ref: "#/components/schemas/GetUserProfile"
+      properties:
+        userId:
+          type: string
+          format: uuid
+          readOnly: true
+        exp:
+          type: integer
     TokenVerify:
       type: object
       properties:
@@ -324,7 +331,8 @@ components:
           enum:
             - MALE
             - FEMALE
-    GetUser:
+
+    GetUserProfile:
       allOf:
         - $ref: "#/components/schemas/User"
       properties:
