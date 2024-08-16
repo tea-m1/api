@@ -45,6 +45,10 @@ export class AuthService {
     };
   }
 
+  async logout(user){
+
+  }
+
   validate(payload) {
     return { userId: payload.sub, email: payload.email, role: payload.role };
   }
