@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, MinLength, IsEnum, IsDateString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  IsEnum,
+  IsDateString,
+} from 'class-validator';
 import { Role } from '../../entity/role.enum';
 
 export class UserSignupDto {
