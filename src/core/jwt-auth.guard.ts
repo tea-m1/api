@@ -1,36 +1,42 @@
 import {
-  Injectable,
-  ExecutionContext,
-  UnauthorizedException,
   CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { BlacklistService } from '../blacklist/blacklist.service';
+import { configService } from './core.module';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly blacklistService: BlacklistService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    console.log('Extracted Token:', token);
-
+    console.log('token : ' + token);
     if (!token) {
       throw new UnauthorizedException('Token not found');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: 'secret',
-      });
-      request.user = payload;
-    } catch (error) {
-      console.error('JWT Verification Error:', error);
-      throw new UnauthorizedException('Invalid token');
+      const isBlacklisted = await this.blacklistService.isBlacklisted(token);
+      if (isBlacklisted) {
+        return false;
+      } else {
+        request.user = await this.jwtService.verifyAsync(token, {
+          secret: configService.getJWTSecret(),
+        });
+        return true;
+      }
+    } catch (e) {
+      throw new UnauthorizedException('Invalid or expired token');
     }
-
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

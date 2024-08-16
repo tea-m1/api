@@ -7,6 +7,8 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserEntity } from '../entity/user.entity';
 import { JwtAuthGuard } from '../core/jwt-auth.guard';
+import { BlacklistModule } from '../blacklist/blacklist.module';
+import { configService } from '../core/core.module';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 @Module({
@@ -14,9 +16,10 @@ import { JwtAuthGuard } from '../core/jwt-auth.guard';
     TypeOrmModule.forFeature([UserEntity]),
     PassportModule,
     JwtModule.register({
-      secret: 'secret',
+      secret: configService.getJWTSecret(),
       signOptions: { expiresIn: '60m', algorithm: 'HS256' },
     }),
+    BlacklistModule,
   ],
   providers: [AuthService, JwtAuthGuard],
   controllers: [AuthController],

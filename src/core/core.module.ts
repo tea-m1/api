@@ -23,6 +23,10 @@ class ConfigCore {
     return this.getValue('PORT', true);
   }
 
+  public getJWTSecret() {
+    return this.getValue('JWT_SECRET', true);
+  }
+
   public isProduction() {
     const mode = this.getValue('MODE', false);
     return mode === 'PROD'; // Changer 'DEV' par 'PROD'
@@ -53,6 +57,8 @@ const configService = new ConfigCore(process.env).ensureValues([
   'POSTGRES_USER',
   'POSTGRES_PASSWORD',
   'POSTGRES_DATABASE',
+  'JWT_SECRET',
+  'RUN_MIGRATIONS',
 ]);
 
 export { configService };
