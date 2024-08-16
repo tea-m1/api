@@ -8,14 +8,21 @@ import { UserSignupDto } from './dto/user-signup.dto';
 import { UserProfile } from './model/userprofile.model';
 import { UserLoginDto } from './dto/user-login.dto';
 import { Role } from '../entity/role.enum';
+import { BlacklistService } from '../blacklist/blacklist.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly blacklistService: BlacklistService,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
+
+  private getTokenExpiration(token: string): number {
+    const decoded: any = this.verifyToken(token);
+    return decoded.exp - Math.floor(Date.now() / 1000);
+  }
 
   async signup(users: UserSignupDto): Promise<UserEntity> {
     const hashedPassword = await this.hashPassword(users.password);
@@ -47,9 +54,19 @@ export class AuthService {
 
   async login(user: UserEntity): Promise<{ access_token: string }> {
     const payload = this.createPayload(user);
+    const accessToken = this.jwtService.sign(payload);
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
     };
+  }
+
+  async logout(token: string): Promise<void> {
+    const expiration = this.getTokenExpiration(token);
+    await this.blacklistService.addToBlacklist(token, expiration);
+  }
+
+  verifyToken(token: string): any {
+    return this.jwtService.decode(token);
   }
 
   validate(payload: UserProfile) {

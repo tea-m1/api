@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserEntity } from '../entity/user.entity';
 import { JwtAuthGuard } from '../core/jwt-auth.guard';
+import { BlacklistModule } from '../blacklist/blacklist.module';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 @Module({
@@ -17,6 +18,7 @@ import { JwtAuthGuard } from '../core/jwt-auth.guard';
       secret: 'secret',
       signOptions: { expiresIn: '60m', algorithm: 'HS256' },
     }),
+    BlacklistModule,
   ],
   providers: [AuthService, JwtAuthGuard],
   controllers: [AuthController],
