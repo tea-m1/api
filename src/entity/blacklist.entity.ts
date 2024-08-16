@@ -14,9 +14,13 @@ export class BlacklistedTokenEntity {
   @Column({ type: 'text', unique: true })
   token: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'createdat',
+  })
   createdAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ name: 'deletedat' })
   deletedAt: Date;
 }

@@ -13,6 +13,7 @@ import { SpeciesModule } from './species/species.module';
 import { FileModule } from './file/file.module';
 import { SpeciesController } from './species/species.controller';
 import { SpeciesService } from './species/species.service';
+import { PlacesModule } from './places/places.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SpeciesService } from './species/species.service';
     BlacklistModule,
     SpeciesModule,
     FileModule,
+    PlacesModule,
   ],
   controllers: [AppController, UserController, SpeciesController],
   providers: [UserService, AppService, JwtService, SpeciesService],
