@@ -9,6 +9,7 @@ import { UserController } from './user/user.controller';
 import { UsersModule } from './user/user.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { BlacklistModule } from './blacklist/blacklist.module';
+import { SpeciesModule } from './species/species.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     UsersModule,
     JwtModule,
     BlacklistModule,
+    SpeciesModule,
   ],
   controllers: [AppController, UserController],
   providers: [UserService, AppService, JwtService],
