@@ -8,6 +8,7 @@ import { UserSignupDto } from './dto/user-signup.dto';
 import { UserProfile } from './dto/user-profile.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { BlacklistService } from '../blacklist/blacklist.service';
+import { configService } from '../core/core.module';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +54,7 @@ export class AuthService {
 
   async login(user: UserEntity): Promise<{ access_token: string }> {
     const payload = this.createPayload(user);
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = await this.generateToken(payload);
     return {
       access_token: accessToken,
     };
@@ -81,6 +82,12 @@ export class AuthService {
     storedPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(inputPassword, storedPassword);
+  }
+
+  async generateToken(payload: UserProfile): Promise<string> {
+    return this.jwtService.sign(payload, {
+      secret: configService.getJWTSecret(),
+    });
   }
 
   private createPayload(user: UserEntity): UserProfile {

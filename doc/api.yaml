@@ -209,7 +209,7 @@ paths:
           required: false
           schema:
             type: integer
-        - name: page_size
+        - name: pageSize
           in: query
           required: false
           schema:
@@ -230,15 +230,35 @@ paths:
       tags:
         - "Biodiversity"
       summary: List all species
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 5
       responses:
         "200":
           description: A list of species
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Species'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Species'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
     post:
       tags:
         - "Biodiversity"
@@ -305,15 +325,35 @@ paths:
       tags:
         - "Biodiversity"
       summary: List all places
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 5
       responses:
         "200":
           description: A list of places
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Place'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Place'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
     post:
       tags:
         - "Biodiversity"
@@ -380,15 +420,35 @@ paths:
       tags:
         - "E-Commerce"
       summary: List all products
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 5
       responses:
         "200":
           description: A list of products
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
     post:
       tags:
         - "E-Commerce"
@@ -593,16 +653,26 @@ components:
         description:
           type: string
         image:
-          type: string
-          format: uri
-          description: URL of the species image
+          type: array
+          items:
+            $ref: "#/components/schemas/File"
         entityType:
           type: string
           enum:
             - Animal
             - Plant
           description: The type of entity (e.g., Animal or Plant)
-
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reference:
+          type: string
+        createdAt:
+          type: string
+          format: datetime
     Place:
       type: object
       properties:

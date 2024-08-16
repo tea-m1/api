@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { SpeciesTypeEnum } from './species-type.enum';
+import { FileEntity } from './file.entity';
 
 @Entity()
 export class SpeciesEntity {
@@ -22,12 +23,12 @@ export class SpeciesEntity {
   @Column({ type: 'varchar', length: 250 })
   description: string;
 
-  @Column({ type: 'bytea', nullable: true })
-  image: Buffer;
-
-  @Column({
-    type: 'enum',
-    enum: ['ANIMAL', 'PLANT'],
+  @OneToMany(() => FileEntity, (file) => file.species, {
+    cascade: true,
+    eager: true,
   })
+  images: FileEntity[];
+
+  @Column({ type: 'enum', enum: ['ANIMAL', 'PLANT'] })
   entityType: 'ANIMAL' | 'PLANT';
 }
