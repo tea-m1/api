@@ -1,0 +1,365 @@
+openapi: "3.0.3"
+info:
+  title: KiS & HKM
+  version: "latest"
+servers:
+  - url: http://localhost:8080
+    description: Local environment
+  - url: https://api.server.test
+security:
+  - BearerAuth: [ ]
+
+paths:
+  "/ping":
+    get:
+      tags:
+        - "Health"
+      operationId: ping
+      security: [ ]
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
+  "/auth/login/":
+    post:
+      tags:
+        - "Authentication"
+      description: |
+        - Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      security: [ ]
+      operationId: login
+      summary: Login connexion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+  "/users/whoami/":
+    get:
+      tags:
+        - "Authentication"
+      operationId: whoami
+      summary: Whois the account related by the provided token
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Whoami"
+  /auth/verify/:
+    post:
+      operationId: verifyToken
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+        - Authentication
+      security: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenVerify"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenVerify"
+          description: Ok
+        "401":
+          description: Unauthorized. Return when the token is invalid or expired.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Token is invalid or expired"
+                  code:
+                    type: string
+                    example: "token_not_valid"
+  "/users/signup/":
+    post:
+      tags:
+        - "Account"
+      operationId: signup
+      summary: Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Whoami"
+  /users/set_password/:
+    post:
+      operationId: changePassword
+      tags:
+        - Account
+      summary: Change the password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetPassword"
+      responses:
+        204:
+          description: No Content
+  /users/set_username/:
+    post:
+      operationId: changeUsername
+      tags:
+        - Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetUsername"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/SetUsername"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SetUsername"
+  "/auth/refresh/":
+    post:
+      operationId: refreshToken
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRefresh"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/TokenRefresh"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/TokenRefresh"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenRefresh"
+          description: ""
+  "/users/":
+    summary: For all operation specific to user globally
+    get:
+      tags:
+        - Account
+      operationId: getUsers
+      description: Only admin users are allowed to get all users
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+          description: User that the username contains the lookup value
+        - name: role
+          in: query
+          description: search for the user that have the specified role
+          schema:
+            $ref: "#/components/schemas/UserRole"
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 15
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateUser"
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Whoami:
+      allOf:
+        - type: object
+        - $ref: "#/components/schemas/GetUser"
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+      required:
+        - token
+    UserRole:
+      type: string
+      enum: [ ADMIN, USER]
+    SetPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+        current_password:
+          type: string
+      required:
+        - current_password
+        - new_password
+    SetUsername:
+      type: object
+      properties:
+        current_password:
+          type: string
+        new_username:
+          type: string
+          title: Username
+          description:
+            Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+      required:
+        - current_password
+        - new_username
+    Activation:
+      type: object
+      properties:
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+        - token
+        - uid
+    TokenPair:
+      type: object
+      properties:
+        access:
+          type: string
+          description: access token
+          readOnly: true
+        refresh:
+          type: string
+          description: refresh token
+          readOnly: true
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+    User:
+      required:
+        - id
+        - firstName
+        - lastName
+        - phone
+        - address
+        - gender
+        - birthDate
+        - birthPlace
+      properties:
+        id:
+          type: string
+        lastName:
+          type: string
+        firstName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+        registrationDate:
+          type: string
+          format: date-time
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+    GetUser:
+      allOf:
+        - $ref: "#/components/schemas/User"
+      properties:
+        username:
+          type: string
+          description: Username of the user associated with this user profile
+    CreateUser:
+      allOf:
+        - $ref: "#/components/schemas/User"
+    Location:
+      required:
+        - latitude
+        - longitude
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+    UserLogin:
+      required:
+        - id
+        - email
+        - password
+        - phoneNumber
+        - location
+      properties:
+        id:
+          type: string
+        phoneNumber:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        location:
+          allOf:
+            - $ref: "#/components/schemas/Location"
